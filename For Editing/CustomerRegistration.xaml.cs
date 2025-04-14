@@ -14,6 +14,8 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using CurrencyTextBoxControl;
+using System.Data.SqlClient;
+
 
 namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
 {
@@ -258,5 +260,38 @@ namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
                 }
             }
         }
+        private void SubmitButton_Click(object sender, RoutedEventArgs e)
+{
+    string connectionString = "Data Source=localhost;Initial Catalog=BoardingHauzDB;Integrated Security=True";
+
+    string query = "INSERT INTO Tenants (FullName, course, Yrlvl, major,Homeland, tender, change) VALUES (@FullName, @Course, @YearLevel, @Major, @Homeland, @Tender, @Change)";
+
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        using (SqlCommand cmd = new SqlCommand(query, conn))
+        {
+            
+            cmd.Parameters.AddWithValue("@FullName", FullNameField.Text);
+            cmd.Parameters.AddWithValue("@Course", CourseField.Text);
+            cmd.Parameters.AddWithValue("@YearLevel", YearLevelField.Text);
+            cmd.Parameters.AddWithValue("@Major", MajorField.Text);
+            cmd.Parameters.AddWithValue("@Homeland", HomeLandlineField.Text);
+            cmd.Parameters.AddWithValue("@Tender", TenderField.Text);
+            cmd.Parameters.AddWithValue("@Change",  ChangeField.Text);
+
+            try
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                NewMessageBox.Show("Customer Registered Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                NewMessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+}
+
     }
 }
