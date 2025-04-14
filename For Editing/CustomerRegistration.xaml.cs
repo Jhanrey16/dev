@@ -14,6 +14,8 @@ using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using CurrencyTextBoxControl;
+using System.Data.SqlClient;
+
 
 namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
 {
@@ -168,6 +170,7 @@ namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
         {
             CashRegister.IsOpen = false;
         }
+        
 
         private void NumpadButton_Click(object sender, RoutedEventArgs e)
         {
@@ -257,6 +260,33 @@ namespace DerkAndresBoardingHauzManagementSystem.Core.Pages
                     TenderFieldPop.Text = currencySymbol + "0.00";
                 }
             }
+        } // aho2 rani derick wa ko kahibaw sa database mn HAHAHA ja lisod ma e identify kung what field aho ibutang HHAH sorryha base rkos inset into natos sign up sauna sab
+       private void SubmitButton_Click(object sender, RoutedEventArgs e)
+{
+    string connectionString = "Data Source=localhost;Initial Catalog=BoardingHauzDB;Integrated Security=True";
+
+    string query = "INSERT INTO Customers (FullName, Address, ContactNumber) VALUES (@FullName, @Address, @ContactNumber)";
+
+    using (SqlConnection conn = new SqlConnection(connectionString))
+    {
+        using (SqlCommand cmd = new SqlCommand(query, conn))
+        {
+            cmd.Parameters.AddWithValue("@FullName", FullNameField.Text);
+            cmd.Parameters.AddWithValue("@Address", AddressField.Text);
+            cmd.Parameters.AddWithValue("@ContactNumber", ContactNumberField.Text);
+
+            try
+            {
+                conn.Open();
+                cmd.ExecuteNonQuery();
+                NewMessageBox.Show("Customer Registered Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                NewMessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+    }
+}
     }
 }
